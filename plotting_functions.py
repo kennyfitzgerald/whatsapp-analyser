@@ -5,9 +5,11 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 
 
+# This function takes as input a chat object, a list of terms, an optional chat name and chat member constraint as
+# inputs and returns a plot of cumulative mentions of any of the listed terms in the chat over time. There is also
+# a built in functionality to visualise as a simple moving average, or to remove the cumulative measure.
 
-
-def plot_cumilative_mentions_multi_term(chat, terms, chat_name='WhatsApp Chat', member='(.*?)', cumsum=True, avg=False):
+def plot_cumulative_mentions_multi_term(chat, terms, chat_name='WhatsApp Chat', member='(.*?)', cum_sum=True, avg=False):
 
     # Filter messages by member (if applicable)
     messages = chat.loc[chat.sender.str.match(member), :]
@@ -23,14 +25,13 @@ def plot_cumilative_mentions_multi_term(chat, terms, chat_name='WhatsApp Chat', 
         mentions = mentions.rename(term)
         multi[term] = mentions
 
-    # Convert to dataframe and apply cumsum or average
+    # Convert to dataframe and apply cum_sum or average
     multi = pd.DataFrame(multi).fillna(0)
 
-    if cumsum:
+    if cum_sum:
         multi = multi.cumsum()
     if avg:
         multi = multi.rolling(window=avg).mean()
-
 
     # Produce plots
     fig, ax = plt.subplots(figsize=(15, 7))
@@ -44,4 +45,4 @@ def plot_cumilative_mentions_multi_term(chat, terms, chat_name='WhatsApp Chat', 
     ax.legend(multi.columns, loc='center left', bbox_to_anchor=(1, .5))
     ax.set_xlabel('Month')
     ax.set_ylabel('Mentions')
-    ax.set_title(chat_name + ': Cumilative mentions', loc='left')
+    ax.set_title(chat_name + ': Cumulative mentions', loc='left')

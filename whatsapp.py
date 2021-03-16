@@ -55,7 +55,7 @@ class WhatsApp:
         self.desc_changes.sender = self.desc_changes.sender.str.replace('You', self.you)
         self.entries_exits.sender = self.entries_exits.sender.str.replace('You', self.you)
 
-        # Convert messages to lowercast
+        # Convert messages to lowercase
         self.main_chat['message'] = self.main_chat.message.str.lower()
 
     def _get_creation_date(self):
@@ -64,7 +64,7 @@ class WhatsApp:
         creation_date = self.main_chat.index[0]
         self.main_chat = self.main_chat.iloc[1:]
 
-        return(creation_date)
+        return creation_date
 
     def _get_chat_creator(self):
         """ Gets chat name and removes next two rows from main chat.
@@ -72,7 +72,7 @@ class WhatsApp:
         creator = self.main_chat.sender[0].replace(' added you', '').replace(' created this group', '')
         self.main_chat = self.main_chat.iloc[2:]
 
-        return(creator)
+        return creator
 
     def _remove_rows(self, df1, df2):
         """ Removes all rows found in df2 from df1
@@ -84,7 +84,7 @@ class WhatsApp:
         df_all = df_all.drop('_merge', axis=1)
         df_all = df_all.set_index('index')
 
-        return(df_all)
+        return df_all
 
     def _chat_name_changes(self):
         """ Extracts all name changes from self.main_chat and returns a dataframe of name changes containing two columns:
@@ -103,7 +103,7 @@ class WhatsApp:
         chat_names['chat_name'] = chat_names['chat_name'].str.lstrip('\“').str.rstrip('\”').str.strip()
         chat_names = chat_names[['sender', 'chat_name']]
 
-        return(chat_names)
+        return chat_names
 
     def _icon_changes(self):
         """ Extracts all icon changes from self.main_chat and returns a dataframe of icon changes.
@@ -119,7 +119,7 @@ class WhatsApp:
         icon = pd.DataFrame(icon['sender'])
         icon['sender'] = icon['sender'].str.replace(' changed this group\'s icon', '')
 
-        return(icon)
+        return icon
 
     def _desc_changes(self):
         """ Extracts all description changes from self.main_chat and returns a dataframe of desc changes.
@@ -180,7 +180,7 @@ class WhatsApp:
         number_changes = self.main_chat['sender'][self.main_chat['sender'].str.contains('changed their phone number to a new number')]
 
         if number_changes.empty:
-            return (remap)
+            return remap
 
         for timestamp, change in number_changes.iteritems():
 
@@ -215,7 +215,6 @@ class WhatsApp:
             remap[change] = [s for s in after if s not in before][0]
 
         return remap
-
 
     def _get_members(self):
         """ Returns a list of chat members.
